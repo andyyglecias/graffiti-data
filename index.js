@@ -1,11 +1,19 @@
-/* global Chart */
+/* global Chart, axios */
 
-const { default: Axios } = require("axios");
-
-Axios.get("https://data.cityofchicago.org/resource/hec5-y4x5.json")
+axios
+  .get("https://data.cityofchicago.org/resource/hec5-y4x5.json")
   .then(function (response) {
     // handle success
-    console.log(response);
+    //console.log(response.data);
+    let tally = {};
+    for (let removalRequest of response.data) {
+      let wardNumber = removalRequest.ward;
+      if (tally[wardNumber]) {
+        tally[wardNumber]++;
+      } else {
+        tally[wardNumber] = 1;
+      }
+    }
   })
   .catch(function (error) {
     // handle error
@@ -15,6 +23,7 @@ Axios.get("https://data.cityofchicago.org/resource/hec5-y4x5.json")
     // always executed
   });
 
+const ctx = document.getElementById("myChart").getContext("2d");
 const myChart = new Chart(ctx, {
   type: "bar",
   data: {
